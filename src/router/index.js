@@ -5,6 +5,7 @@ import Login from '@/views/Login.vue'
 import Index from '@/views/Index.vue'
 import Welcome from '@/views/Welcome.vue'
 import XinwenList from '@/views/XinwenList.vue'
+import XinwenFabu from '@/views/XinwenFabu.vue'
 
 import { Message } from 'element-ui'
 Vue.use(VueRouter)
@@ -31,6 +32,11 @@ let router = new VueRouter({
           name: 'xinwenList',
           path: 'xinwenList',
           component: XinwenList
+        },
+        {
+          name: 'xinwenFabu',
+          path: 'xinwenFabu',
+          component: XinwenFabu
         }
       ]
     }
@@ -40,6 +46,8 @@ let router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.path === '/login') {
     next()
+  } else if (to.path === '/') {
+    next({ name: 'index' })
   } else {
     if (localStorage.getItem('toutiao_back')) {
       next()

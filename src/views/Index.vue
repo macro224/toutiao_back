@@ -17,10 +17,10 @@
               <i class="el-icon-location"></i>
               <span>文章管理</span>
             </span>
-            <el-menu-item index="xinwenlist">
+            <el-menu-item index="xinwenList">
               <i class="el-icon-location"></i>文章列表
             </el-menu-item>
-            <el-menu-item index="1-2">
+            <el-menu-item index="xinwenFabu">
               <i class="el-icon-location"></i>文章发布
             </el-menu-item>
           </el-submenu>
