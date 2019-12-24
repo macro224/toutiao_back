@@ -10,7 +10,6 @@
     <el-card class="box-card" style="margin-top:20px">
       <!-- 添加一个表单 -->
       <el-form ref="postForm" :model="postForm" label-width="80px">
-
         <!-- 标题 -->
         <el-form-item label="标题:">
           <el-input v-model="postForm.title"></el-input>
@@ -34,9 +33,10 @@
             class="upload-demo"
             action="http://127.0.0.1:3000/upload"
             :headers="setToken()"
-            :before-upload='beforeUpload'
+            :before-upload="beforeUpload"
             :on-success="handlerSuccess"
-            :file-list="fileList">
+            :file-list="fileList"
+          >
             <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="el-upload__tip">只能上传视频文件</div>
           </el-upload>
@@ -44,28 +44,29 @@
 
         <!-- 栏目 -->
         <el-form-item label="栏目:">
-            <el-checkbox
+          <el-checkbox
             :indeterminate="isIndeterminate"
             v-model="checkAll"
-            @change="handleCheckAllChange">
-              全选
-            </el-checkbox>
-            <el-checkbox-group v-model="checkedCities" @change="handleCheckedCateChange">
-                <el-checkbox v-for="item in cateList" :label="item.id" :key="item.id">{{item.name}}</el-checkbox>
-            </el-checkbox-group>
+            @change="handleCheckAllChange"
+          >全选</el-checkbox>
+          <el-checkbox-group v-model="checkedCities" @change="handleCheckedCateChange">
+            <el-checkbox v-for="item in cateList" :label="item.id" :key="item.id">{{item.name}}</el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
 
         <!-- 封面 -->
         <el-form-item label="封面:">
-            <!-- 图片上传 -->
-          <el-upload action="http://127.0.0.1:3000/upload"
+          <!-- 图片上传 -->
+          <el-upload
+            action="http://127.0.0.1:3000/upload"
             :on-success="coverSuccess"
             :limit="3"
             list-type="picture-card"
-            :headers="setToken()">
+            :headers="setToken()"
+          >
             <i class="el-icon-plus"></i>
           </el-upload>
-            <!-- 图片预览 -->
+          <!-- 图片预览 -->
           <el-dialog size="tiny">
             <img width="100%" :src="dialogImageUrl" alt />
           </el-dialog>
@@ -73,9 +74,8 @@
 
         <!-- 提交按钮 -->
         <el-form-item>
-            <el-button type="primary" @click="tijiao">提交</el-button>
+          <el-button type="primary" @click="tijiao">提交</el-button>
         </el-form-item>
-
       </el-form>
     </el-card>
   </div>
@@ -85,6 +85,7 @@
 import VueEditor from 'vue-word-editor'
 import 'quill/dist/quill.snow.css'
 import { getcateList } from '@/api/cate.js'
+import { postFabu } from '@/api/xinwen.js'
 export default {
   data () {
     return {
@@ -175,17 +176,38 @@ export default {
     },
     // 栏目全选
     handleCheckAllChange (val) {
-      this.checkedCities = val ? this.cateList : []
+      this.checkedCities = val ? this.cateList.map(value => {
+        return value.id
+      }) : []
       this.isIndeterminate = false
     },
     // 栏目单选框选择触发
-    handleCheckedCateChange () {
-
+    handleCheckedCateChange (v) {
+      // console.log(this.checkedCities, v)
+      let checkedCount = v.length
+      // 如果数量和源数据的数量一样，说明就是全选状态
+      this.checkAll = checkedCount === this.cateList.length
+      // 如果有选择，但是又没有全选，那么就是不确定的状态
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.cateList.length
     },
     // 提交按钮
-    tijiao () {
+    async tijiao () {
       if (this.postForm.type === 1) {
         this.postForm.content = this.$refs.vueEditor.editor.root.innerHTML
+      }
+      // 获取栏目数据
+      this.postForm.categories.length = 0
+      this.cateList.forEach(value => {
+        this.postForm.categories.push({
+          id: value
+        })
+      })
+      console.log(this.postForm)
+      let res = await postFabu(this.postForm)
+      console.log(res)
+      if (res.data.message === '文章发布成功') {
+        this.$message.success('文章发布成功')
+        this.$router.push({ name: 'xinwenList' })
       }
       console.log(this.postForm)
     }
