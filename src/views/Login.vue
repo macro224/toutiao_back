@@ -17,6 +17,7 @@
         <!-- 密码 -->
         <el-form-item prop="password">
           <el-input
+            type="password"
             v-model="loginForm.password"
             placeholder="请输入密码"
             clearable
@@ -60,6 +61,8 @@ export default {
           let res = await postUser(this.loginForm)
           // 判断是否登录成功
           if (res.data.message === '登录成功') {
+            console.log(res)
+            this.$store.commit('setUserInfo', res.data.data)
             // 登录成功本地存储token值
             localStorage.setItem('toutiao_back', res.data.data.token)
             // 跳转页面

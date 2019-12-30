@@ -30,12 +30,12 @@ let router = new VueRouter({
         },
         {
           name: 'xinwenList',
-          path: 'xinwenList',
+          path: 'xinwen_list',
           component: XinwenList
         },
         {
           name: 'xinwenFabu',
-          path: 'xinwenFabu',
+          path: 'xinwen_fabu',
           component: XinwenFabu
         }
       ]
